@@ -1,128 +1,206 @@
-//
-// Created by sergo on 19.10.2024.
-//
+// //
+// // Created by sergo on 19.10.2024.
+// //
 
 #include <gtest/gtest.h>
 
+#include <utility>
+
 #include "array/array.h"
 
-// Тест конструктора и метода size()
-TEST(ArrayTest, ConstructorAndSize) {
-    const Array<int> arr;
-    EXPECT_EQ(arr.size(), 0); // Проверяем, что размер по умолчанию 0
-
-    const Array<int> arr_with_capacity(20);
-    EXPECT_EQ(arr_with_capacity.size(), 0); // Проверяем, что начальный размер массива 0, даже при установленной capacity
-}
-
-// Тест вставки элементов в конец массива
-TEST(ArrayTest, InsertEnd) {
+// Test default constructor
+TEST(ArrayTest, DefaultConstructor) {
     Array<int> arr;
-    arr.insert(10);
-    arr.insert(20);
-    arr.insert(30);
-
-    EXPECT_EQ(arr.size(), 3);
-    EXPECT_EQ(arr[0], 10);
-    EXPECT_EQ(arr[1], 20);
-    EXPECT_EQ(arr[2], 30);
+    EXPECT_EQ(arr.size(), 0);
+    EXPECT_EQ(arr.capacity(), 8);
 }
 
-// Тест вставки элементов в определённую позицию
+// Test constructor with capacity
+TEST(ArrayTest, ConstructorWithCapacity) {
+    const Array<int> arr(20);
+    EXPECT_EQ(arr.size(), 0);
+    EXPECT_EQ(arr.capacity(), 20);
+}
+
+// Test insert and size
+TEST(ArrayTest, InsertAndSize) {
+    Array<int> arr;
+    arr.insert(42);
+    EXPECT_EQ(arr.size(), 1);
+    EXPECT_EQ(arr[0], 42);
+}
+
+// Test insert at specific index
 TEST(ArrayTest, InsertAtIndex) {
     Array<int> arr;
-    arr.insert(10);
-    arr.insert(20);
-    arr.insert(0, 5); // Вставляем в начало
-    arr.insert(2, 15); // Вставляем между
-
-    EXPECT_EQ(arr.size(), 4);
-    EXPECT_EQ(arr[0], 5);   // Проверяем, что 5 вставилось в начало
-    EXPECT_EQ(arr[1], 10);  // Остальные элементы должны сместиться
-    EXPECT_EQ(arr[2], 15);
-    EXPECT_EQ(arr[3], 20);
+    arr.insert(42);
+    arr.insert(0, 24);
+    EXPECT_EQ(arr.size(), 2);
+    EXPECT_EQ(arr[0], 24);
+    EXPECT_EQ(arr[1], 42);
 }
 
-// Тест удаления элементов
+// Test remove
 TEST(ArrayTest, Remove) {
     Array<int> arr;
-    arr.insert(10);
-    arr.insert(20);
-    arr.insert(30);
-    arr.remove(1); // Удаляем элемент с индексом 1 (20)
-
-    EXPECT_EQ(arr.size(), 2);
-    EXPECT_EQ(arr[0], 10);  // Проверяем, что элементы сместились
-    EXPECT_EQ(arr[1], 30);
+    arr.insert(42);
+    arr.insert(24);
+    arr.remove(0);
+    EXPECT_EQ(arr.size(), 1);
+    EXPECT_EQ(arr[0], 24);
 }
 
-// Тест копирования массива
+// Test indexing
+TEST(ArrayTest, Indexing) {
+    Array<int> arr;
+    arr.insert(42);
+    EXPECT_EQ(arr[0], 42);
+    arr[0] = 24;
+    EXPECT_EQ(arr[0], 24);
+}
+
+// Test copy constructor
 TEST(ArrayTest, CopyConstructor) {
     Array<int> arr;
-    arr.insert(10);
-    arr.insert(20);
-
-    Array<int> arr_copy(arr);
-    EXPECT_EQ(arr_copy.size(), 2);
-    EXPECT_EQ(arr_copy[0], 10);
-    EXPECT_EQ(arr_copy[1], 20);
+    arr.insert(42);
+    Array<int> arrCopy = arr;
+    EXPECT_EQ(arrCopy.size(), 1);
+    EXPECT_EQ(arrCopy[0], 42);
 }
 
-// Тест перемещения массива
+// Test move constructor
 TEST(ArrayTest, MoveConstructor) {
     Array<int> arr;
-    arr.insert(10);
-    arr.insert(20);
-
-    Array<int> arr_move(std::move(arr));
-    EXPECT_EQ(arr_move.size(), 2);
-    EXPECT_EQ(arr_move[0], 10);
-    EXPECT_EQ(arr_move[1], 20);
-    EXPECT_EQ(arr.size(), 0); // Исходный массив должен быть пустым после перемещения
+    arr.insert(42);
+    Array<int> arrMoved = std::move(arr);
+    EXPECT_EQ(arrMoved.size(), 1);
+    EXPECT_EQ(arrMoved[0], 42);
+    EXPECT_EQ(arr.size(), 0); // Original array should be empty
 }
 
-// Тест итератора
+// Test assignment operator
+TEST(ArrayTest, AssignmentOperator) {
+    Array<int> arr;
+    arr.insert(42);
+    Array<int> arrCopy = arr;
+    EXPECT_EQ(arrCopy.size(), 1);
+    EXPECT_EQ(arrCopy[0], 42);
+}
+
+// Test move assignment operator
+TEST(ArrayTest, MoveAssignmentOperator) {
+    Array<int> arr;
+    arr.insert(42);
+    Array<int> arrMoved = std::move(arr);
+    EXPECT_EQ(arrMoved.size(), 1);
+    EXPECT_EQ(arrMoved[0], 42);
+    EXPECT_EQ(arr.size(), 0); // Original array should be empty
+}
+
+// Test iterator
 TEST(ArrayTest, Iterator) {
     Array<int> arr;
-    for (int i = 1; i <= 5; ++i) {
+    for (int i = 0; i < 5; ++i) {
         arr.insert(i);
     }
-
     auto it = arr.iterator();
-    int expected_value = 1;
-    while (it.hasNext()) {
-        EXPECT_EQ(it.get(), expected_value);
+    for (int i = 0; i < 5; ++i) {
+        ASSERT_TRUE(it.hasNext());
+        EXPECT_EQ(it.get(), i);
         it.next();
-        ++expected_value;
     }
+    EXPECT_FALSE(it.hasNext());
 }
 
-// Тест обратного итератора
+// Test reverse iterator
 TEST(ArrayTest, ReverseIterator) {
     Array<int> arr;
-    for (int i = 1; i <= 5; ++i) {
+    for (int i = 0; i < 5; ++i) {
         arr.insert(i);
     }
-
     auto it = arr.reverseIterator();
-    int expected_value = 5;
-    while (it.hasNext()) {
-        EXPECT_EQ(it.get(), expected_value);
+    for (int i = 4; i > 0; --i) {
+        ASSERT_TRUE(it.hasNext());
+        EXPECT_EQ(it.get(), i);
         it.next();
-        --expected_value;
     }
+    EXPECT_FALSE(it.hasNext());
 }
 
-// Тест оператора индексирования
-TEST(ArrayTest, AccessOperator) {
-    Array<int> arr;
-    arr.insert(10);
-    arr.insert(20);
+// Test with custom type
+struct TestStruct {
+    std::string s;
+    explicit TestStruct(std::string  val) : s(std::move(val)) {}
+    bool operator==(const TestStruct& other) const {
+        return s == other.s;
+    }
+};
 
-    EXPECT_EQ(arr[0], 10);
-    EXPECT_EQ(arr[1], 20);
-
-    arr[0] = 15;
-    EXPECT_EQ(arr[0], 15);
+TEST(ArrayTest, InsertCustomType) {
+    Array<TestStruct> arr;
+    arr.insert(TestStruct("abacaba"));
+    EXPECT_EQ(arr.size(), 1);
+    EXPECT_EQ(arr[0].s, "abacaba");
 }
 
+TEST(ArrayTest, RemoveCustomType) {
+    Array<TestStruct> arr;
+    arr.insert(TestStruct("abacaba"));
+    arr.remove(0);
+    EXPECT_EQ(arr.size(), 0);
+}
+
+TEST(ArrayTest, IndexingCustomType) {
+    Array<TestStruct> arr;
+    arr.insert(TestStruct("abacaba"));
+    EXPECT_EQ(arr[0].s, "abacaba");
+    arr[0].s = "qwerty";
+    EXPECT_EQ(arr[0].s, "qwerty");
+}
+
+TEST(ArrayTest, CopyConstructorCustomType) {
+    Array<TestStruct> arr;
+    arr.insert(TestStruct("abacaba"));
+    Array<TestStruct> arrCopy = arr;
+    EXPECT_EQ(arrCopy.size(), 1);
+    EXPECT_EQ(arrCopy[0].s, "abacaba");
+}
+
+TEST(ArrayTest, MoveConstructorCustomType) {
+    Array<TestStruct> arr;
+    arr.insert(TestStruct("abacaba"));
+    Array<TestStruct> arrMoved = std::move(arr);
+    EXPECT_EQ(arrMoved.size(), 1);
+    EXPECT_EQ(arrMoved[0].s, "abacaba");
+    EXPECT_EQ(arr.size(), 0); // Original array should be empty
+}
+
+TEST(ArrayTest, AssignmentOperatorCustomType) {
+    Array<TestStruct> arr;
+    arr.insert(TestStruct("abacaba"));
+    Array<TestStruct> arrCopy = arr;
+    EXPECT_EQ(arrCopy.size(), 1);
+    EXPECT_EQ(arrCopy[0].s, "abacaba");
+}
+
+TEST(ArrayTest, MoveAssignmentOperatorCustomType) {
+    Array<TestStruct> arr;
+    arr.insert(TestStruct("abacaba"));
+    Array<TestStruct> arrMoved = std::move(arr);
+    EXPECT_EQ(arrMoved.size(), 1);
+    EXPECT_EQ(arrMoved[0].s, "abacaba");
+    EXPECT_EQ(arr.size(), 0); // Original array should be empty
+}
+
+// Test resizing
+TEST(ArrayTest, Resize) {
+    Array<int> arr(2);
+    arr.insert(1);
+    arr.insert(2);
+    arr.insert(3);
+    EXPECT_EQ(arr.size(), 3);
+    EXPECT_EQ(arr.capacity(), 4);
+    EXPECT_EQ(arr[0], 1);
+    EXPECT_EQ(arr[1], 2);
+    EXPECT_EQ(arr[2], 3);
+}

@@ -56,6 +56,13 @@ build CMakeFiles/lab2_lib.dir/array/array.cpp.obj: CXX_COMPILER__lab2_lib_unscan
   OBJECT_DIR = CMakeFiles\lab2_lib.dir
   OBJECT_FILE_DIR = CMakeFiles\lab2_lib.dir\array
 
+build CMakeFiles/lab2_lib.dir/main.cpp.obj: CXX_COMPILER__lab2_lib_unscanned_Debug C$:/Users/sergo/CLionProjects/lab2/main.cpp || cmake_object_order_depends_target_lab2_lib
+  DEP_FILE = CMakeFiles\lab2_lib.dir\main.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -IC:/Users/sergo/CLionProjects/lab2
+  OBJECT_DIR = CMakeFiles\lab2_lib.dir
+  OBJECT_FILE_DIR = CMakeFiles\lab2_lib.dir
+
 
 # =============================================================================
 # Link build statements for STATIC_LIBRARY target lab2_lib
@@ -64,7 +71,7 @@ build CMakeFiles/lab2_lib.dir/array/array.cpp.obj: CXX_COMPILER__lab2_lib_unscan
 #############################################
 # Link the static library liblab2_lib.a
 
-build liblab2_lib.a: CXX_STATIC_LIBRARY_LINKER__lab2_lib_Debug CMakeFiles/lab2_lib.dir/array/array.cpp.obj
+build liblab2_lib.a: CXX_STATIC_LIBRARY_LINKER__lab2_lib_Debug CMakeFiles/lab2_lib.dir/array/array.cpp.obj CMakeFiles/lab2_lib.dir/main.cpp.obj
   LANGUAGE_COMPILE_FLAGS = -g
   OBJECT_DIR = CMakeFiles\lab2_lib.dir
   POST_BUILD = cd .

@@ -5,6 +5,7 @@ project(lab2)
 add_library(lab2_lib
         array/array.cpp
         array/array.h
+        main.cpp
 )
 
 add_subdirectory(lib/googletest)
