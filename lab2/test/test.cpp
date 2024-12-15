@@ -112,6 +112,17 @@ TEST(ArrayTest, Iterator) {
     EXPECT_FALSE(it.hasNext());
 }
 
+// Test iterator after array modification
+TEST(ArrayTest, IteratorAfterModification) {
+    Array<int> arr;
+    for (int i = 0; i < 5; ++i) {
+        arr.insert(i);
+    }
+    const auto it = arr.iterator();
+    arr.insert(42);
+    ASSERT_THROW(it.get(), std::runtime_error);
+}
+
 // Test reverse iterator
 TEST(ArrayTest, ReverseIterator) {
     Array<int> arr;

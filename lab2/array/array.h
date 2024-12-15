@@ -57,17 +57,20 @@ public:
 public:
     class Iterator {
     public:
-        Iterator(T* ptr, int size) : current(ptr), end(ptr + size) {}
+        Iterator(const Array* arr, T* ptr, int size) : array(arr), current(ptr), end(ptr + size), size(size) {}
 
         const T& get() const {
+            validate();
             return *current;
         }
 
         void set(const T& value) {
+            validate();
             *current = value;
         }
 
         void next() {
+            validate();
             ++current;
         }
 
@@ -76,8 +79,16 @@ public:
         }
 
     private:
+        const Array* array;
         T* current{};
         T* end{};
+        int size;
+
+        void validate() const {
+            if(size != array->size()) {
+                throw std::runtime_error("Array was modified during iteration");
+            }
+        }
     };
 
     class ConstIterator {
@@ -244,7 +255,7 @@ int Array<T>::capacity() const {
 
 template<typename T>
 typename Array<T>::Iterator Array<T>::iterator() {
-    return Iterator(data_, size_);
+    return Iterator(this, data_, size_);
 }
 
 template<typename T>
